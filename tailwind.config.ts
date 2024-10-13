@@ -11,6 +11,12 @@ const config: Config = {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+
+        purpleDark: "var(--purple-dark)",
+        purpleLight: "var(--purple-light)",
+
+        deliGreen: "var(--deli-green)",
+        deliGreenDark: "var(--deli-green-dark)",
       },
     },
   },
