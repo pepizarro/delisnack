@@ -4,6 +4,7 @@ import { ActionResponse } from "@/app/actions/action";
 import db from "@/db/db";
 import { Lunch } from "@/db/schema";
 import fileStorage from "@/files/files";
+import { revalidatePath } from "next/cache";
 
 export async function createLunch(
   prevState: ActionResponse,
@@ -65,8 +66,9 @@ export async function createLunch(
     };
   }
 
+  revalidatePath("/");
+
   // sleep
-  await new Promise((resolve) => setTimeout(resolve, 2000));
   return {
     message: "Lunch created",
     error: false,
