@@ -2,7 +2,6 @@
 import { Lunch } from "@/db/schema";
 import Image from "next/image";
 
-import sushi from "@/public/sushi.webp";
 import { useEffect, useState } from "react";
 
 type Props = {

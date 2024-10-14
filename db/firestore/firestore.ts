@@ -28,48 +28,6 @@ export class FirestoreDB implements Database {
     //});
     const lunches: Lunch[] = [];
 
-    const mockLunches = [
-      {
-        id: "1",
-        name: "Lomo Saltado",
-        description: "Lomo Saltado con arroz",
-        shortDescription: "Lomo Saltado",
-        price: 10,
-        available: true,
-        stock: 10,
-        images: ["url"],
-      },
-      {
-        id: "2",
-        name: "Arroz Chaufa",
-        description: "Arroz Chaufa con pollo",
-        shortDescription: "",
-        price: 10,
-        available: true,
-        stock: 10,
-        images: ["url"],
-      },
-      {
-        id: "3",
-        name: "Ceviche",
-        description: "Ceviche de pescado",
-        shortDescription: "Ceviche",
-        price: 10,
-        available: true,
-        stock: 10,
-        images: ["url"],
-      },
-      {
-        id: "4",
-        name: "Pizza",
-        description: "Pizza de pepperoni",
-        shortDescription: "Pizza",
-        price: 10,
-        available: true,
-        stock: 10,
-        images: ["url"],
-      },
-    ];
     //return mockLunches;
 
     try {
@@ -120,7 +78,10 @@ export class FirestoreDB implements Database {
   }
 
   async addLunch(lunch: Lunch): Promise<void> {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id, ...rest } = lunch;
+    //const rest = { ...lunch };
+    //delete rest.id;
 
     addDoc(this.lunchesCol, rest);
 

@@ -41,5 +41,7 @@ export class S3Bucket implements FileStorage {
 
   async deleteFile(url: string): Promise<void> {
     // delete file from s3
+    console.log("deleting file: ", url);
+    return;
   }
 }

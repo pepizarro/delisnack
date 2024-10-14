@@ -4,3 +4,8 @@ export type ActionResponse = {
   message: string;
   error: boolean;
 };
+
+export type FormState = {
+  message: string;
+  error: boolean;
+};

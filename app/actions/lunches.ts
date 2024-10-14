@@ -6,7 +6,7 @@ import { Lunch } from "@/db/schema";
 import fileStorage from "@/files/files";
 
 export async function createLunch(
-  prevState: any,
+  prevState: ActionResponse,
   formData: FormData,
 ): Promise<ActionResponse> {
   // todo: validate formData
@@ -20,11 +20,12 @@ export async function createLunch(
     images: formData.getAll("images"),
   };
 
-  let urls: string[] = [];
+  let urls: string[];
   const lunchName = rawFormData.name.replace(/\s+/g, "").toLowerCase();
 
   try {
     let i = 0;
+    urls = [];
     for (const image of rawFormData.images) {
       const fileImage = image as File;
       const fileName = `${lunchName}-${i}-${fileImage.name.replace(/\s+/g, "").toLowerCase()}`;
@@ -50,7 +51,7 @@ export async function createLunch(
     price: Number(rawFormData.price),
     stock: Number(rawFormData.stock),
     available: Number(rawFormData.stock) > 0,
-    images: urls,
+    images: urls || [],
   };
   console.log("newLunch: ", newLunch);
 
@@ -58,6 +59,10 @@ export async function createLunch(
     db.addLunch(newLunch);
   } catch (error) {
     console.error(error);
+    return {
+      message: "Error creating lunch",
+      error: true,
+    };
   }
 
   // sleep

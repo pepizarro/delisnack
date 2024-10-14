@@ -8,7 +8,11 @@ import {
 import { LoadingSpinner } from "@/app/icons";
 
 export default function NewLunchForm() {
-  const [state, formAction] = useFormState(createLunch, "");
+  const initialState = {
+    message: "",
+    error: false,
+  };
+  const [state, formAction] = useFormState(createLunch, initialState);
 
   return (
     <form
