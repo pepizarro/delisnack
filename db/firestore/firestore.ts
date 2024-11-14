@@ -1,23 +1,30 @@
+import { OrderError, OrderErrorType } from "@/utils/errors";
 import { Database } from "../db";
-import { Lunch, Reservation } from "../schema";
+import { Lunch, Order } from "../schema";
 
 import app from "@/utils/firebaseConfig";
 import {
   addDoc,
   collection,
   CollectionReference,
+  doc,
+  DocumentData,
   Firestore,
+  getDoc,
   getDocs,
   getFirestore,
+  runTransaction,
 } from "firebase/firestore";
 
 export class FirestoreDB implements Database {
   db: Firestore;
-  lunchesCol: CollectionReference;
+  lunchesRef: CollectionReference;
+  ordersRef: CollectionReference;
 
   constructor() {
     this.db = getFirestore(app);
-    this.lunchesCol = collection(this.db, "lunches");
+    this.lunchesRef = collection(this.db, "lunches");
+    this.ordersRef = collection(this.db, "orders");
   }
 
   async getLunches(): Promise<Lunch[]> {
@@ -26,15 +33,14 @@ export class FirestoreDB implements Database {
     //    console.log(doc.id, "=>", doc.data());
     //  });
     //});
-    const lunches: Lunch[] = [];
 
     //return mockLunches;
 
+    const lunches: Lunch[] = [];
+
     try {
-      const snapshot = await getDocs(this.lunchesCol);
-      console.log("snapshots: ", snapshot);
+      const snapshot = await getDocs(this.lunchesRef);
       snapshot.docs.forEach((doc) => {
-        console.log("lunch:", doc.id, "=>", doc.data());
         const data = doc.data();
         lunches.push({
           id: doc.id,
@@ -48,7 +54,6 @@ export class FirestoreDB implements Database {
         });
       });
 
-      console.log("lunches: ", lunches);
       return lunches;
 
       //lunches.push(snapshot.docs.map((doc) => doc.data()));
@@ -59,22 +64,32 @@ export class FirestoreDB implements Database {
   }
 
   async getLunch(id: string): Promise<Lunch> {
-    console.log(id);
-    return {
-      id: "id",
-      name: "name",
-      description: "description",
-      shortDescription: "shortDescription",
-      price: 1,
-      available: true,
-      stock: 1,
-      images: ["url"],
-    };
-  }
+    try {
+      const docRef = doc(this.db, "lunches", id);
+      //console.log(docRef);
+      const snapshot = await getDoc(docRef);
+      const data = snapshot.data();
+      if (!data) {
+        throw new Error(`Lunch with id: ${id} not found`);
+      }
 
-  async getReservations(lunchId: string): Promise<Reservation[]> {
-    console.log(lunchId);
-    return [];
+      this.validateLunch(data, id);
+
+      const lunch = {
+        id: id,
+        name: data.name,
+        description: data.description,
+        shortDescription: data.shortDescription,
+        price: data.price,
+        available: data.available,
+        stock: data.stock,
+        images: data.images,
+      };
+      return lunch;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Error getting lunch by id: " + id);
+    }
   }
 
   async addLunch(lunch: Lunch): Promise<void> {
@@ -83,8 +98,84 @@ export class FirestoreDB implements Database {
     //const rest = { ...lunch };
     //delete rest.id;
 
-    addDoc(this.lunchesCol, rest);
+    addDoc(this.lunchesRef, rest);
 
     return;
+  }
+
+  async getOrder(orderId: string): Promise<Order[]> {
+    console.log(orderId);
+    return [];
+  }
+
+  async createOrder(order: Order): Promise<string> {
+    runTransaction(this.db, async (transaction) => {
+      console.log("Transaction started");
+      for (const lunch of order.lunches) {
+        const lunchRef = doc(this.lunchesRef, lunch.lunchId);
+        const lunchDoc = await transaction.get(lunchRef);
+        if (!lunchDoc.exists()) {
+          throw new OrderError(
+            `Lunch with id: ${lunch.lunchId} not found`,
+            OrderErrorType.InvalidOrder,
+          );
+        }
+
+        const lunchData = lunchDoc.data();
+        this.validateLunch(lunchData, lunch.lunchId);
+
+        if (lunchData.stock < lunch.amount) {
+          throw new OrderError(
+            `Not enough stock for lunch with id: ${lunch.lunchId}`,
+            OrderErrorType.OutOfStock,
+            lunch.lunchId,
+          );
+        }
+
+        if (lunchData.price !== lunch.pricePerUnit) {
+          throw new OrderError(
+            `Price mismatch for lunch with id: ${lunch.lunchId}`,
+            OrderErrorType.InvalidOrder,
+            lunch.lunchId,
+          );
+        }
+
+        transaction.update(lunchRef, {
+          stock: lunchData.stock - lunch.amount,
+        });
+        console.log("Transaction succesful lunch with id: ", lunch.lunchId);
+      }
+    });
+
+    order.placedOrderTime = new Date();
+
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { id, ...rest } = order;
+
+    const orderDoc = await addDoc(this.ordersRef, rest);
+    console.log("Order created with id: ", orderDoc.id);
+
+    return orderDoc.id;
+  }
+
+  private validateLunch(doc: DocumentData | undefined, id: string) {
+    if (!doc) {
+      throw new Error("Lunch not found");
+    }
+
+    const attributes = [
+      "name",
+      "description",
+      "shortDescription",
+      "price",
+      "available",
+      "stock",
+      "images",
+    ];
+    for (const attr of attributes) {
+      if (doc[attr] === undefined) {
+        throw new Error(`Lunch with id: ${id} is missing ${attr}`);
+      }
+    }
   }
 }

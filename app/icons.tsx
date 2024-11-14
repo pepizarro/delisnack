@@ -73,3 +73,69 @@ export function LoadingSpinner({
     </svg>
   );
 }
+
+export function Plus({
+  w,
+  h,
+  className,
+}: {
+  w?: number;
+  h?: number;
+  className?: string;
+}) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={w || 16}
+      height={h || 16}
+      className={className}
+      viewBox="0 0 512 512"
+    >
+      <path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 144L48 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l144 0 0 144c0 17.7 14.3 32 32 32s32-14.3 32-32l0-144 144 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-144 0 0-144z" />
+    </svg>
+  );
+}
+
+export function Minus({
+  w,
+  h,
+  className,
+}: {
+  w?: number;
+  h?: number;
+  className?: string;
+}) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={w || 16}
+      height={h || 16}
+      className={className}
+      viewBox="0 0 512 512"
+    >
+      <path d="M432 256c0 17.7-14.3 32-32 32L48 288c-17.7 0-32-14.3-32-32s14.3-32 32-32l352 0c17.7 0 32 14.3 32 32z" />
+    </svg>
+  );
+}
+
+export function Thrash({
+  w,
+  h,
+  className,
+}: {
+  w?: number;
+  h?: number;
+  className?: string;
+}) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width={w || 16}
+      height={h || 16}
+      className={className}
+      viewBox="0 0 512 512"
+    >
+      <path d="M135.2 17.7L128 32 32 32C14.3 32 0 46.3 0 64S14.3 96 32 96l384 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-96 0-7.2-14.3C307.4 6.8 296.3 0 284.2 0L163.8 0c-12.1 0-23.2 6.8-28.6 17.7zM416 128L32 128 53.2 467c1.6 25.3 22.6 45 47.9 45l245.8 0c25.3 0 46.3-19.7 47.9-45L416 128z" />
+    </svg>
+  );
+}

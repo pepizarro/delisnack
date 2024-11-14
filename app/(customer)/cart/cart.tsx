@@ -3,11 +3,15 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
-type CartItem = {
+export type CartItem = {
   id: string;
 };
 
-export function Cart() {
+export function cleanCart() {
+  localStorage.removeItem("cart");
+}
+
+export function CartComponent() {
   const [cartCount, setCartCount] = useState<number>(0);
 
   useEffect(() => {
@@ -21,10 +25,18 @@ export function Cart() {
       setCartCount(cartItems.length);
     };
 
+    const handleCartRemoved = () => {
+      const cart = localStorage.getItem("cart");
+      const cartItems: CartItem[] = cart ? JSON.parse(cart) : [];
+      setCartCount(cartItems.length);
+    };
+
     window.addEventListener("addedToCart", handleCartAdded);
+    window.addEventListener("removedFromCart", handleCartRemoved);
 
     return () => {
       window.removeEventListener("addedToCart", handleCartAdded);
+      window.removeEventListener("removedFromCart", handleCartRemoved);
     };
   }, []);
 

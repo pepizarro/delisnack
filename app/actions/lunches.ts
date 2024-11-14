@@ -10,8 +10,7 @@ export async function createLunch(
   prevState: ActionResponse,
   formData: FormData,
 ): Promise<ActionResponse> {
-  // todo: validate formData
-
+  // TODO: validate formData
   const rawFormData = {
     name: formData.get("name") as string,
     description: formData.get("description"),
