@@ -1,3 +1,4 @@
+import db from "@/db/db";
 import { Payments } from "../payments";
 import {
   Environment,
@@ -10,10 +11,9 @@ import {
 export class WebPay implements Payments {
   private options: Options;
 
-  constructor(commerceCode: string, apiKey: string) {
+  constructor() {
     //this.commerceCode = commerceCode;
     //this.apiKey = apiKey;
-    console.log(commerceCode, apiKey);
     this.options = new Options(
       IntegrationCommerceCodes.WEBPAY_PLUS,
       IntegrationApiKeys.WEBPAY,
@@ -30,13 +30,39 @@ export class WebPay implements Payments {
         orderId,
         "session-id",
         amount,
-        `https://localhost:3000/success/${orderId}`,
+        `http://localhost:3000/success/${orderId}`,
       );
-      console.log("response from webpay transaction: ", response);
       return { url: response.url, token: response.token };
     } catch (error) {
-      console.log("error creating transaction: ", error);
+      console.error("error creating transaction: ", error);
       throw new Error("Error creating transaction");
+    }
+  }
+
+  async confirmTransaction(orderId: string, token: string): Promise<boolean> {
+    try {
+      const tx = new WebpayPlus.Transaction(this.options);
+      const response = await tx.commit(token);
+      if (response.status !== "AUTHORIZED") {
+        return false;
+      }
+
+      await db.updateOrder(orderId, "paid", true);
+
+      return true;
+    } catch (error) {
+      console.error("error confirming transaction: ", error);
+      return false;
+    }
+  }
+  async checkTransaction(token: string): Promise<boolean> {
+    try {
+      const tx = new WebpayPlus.Transaction(this.options);
+      await tx.status(token);
+      return true;
+    } catch (error) {
+      console.error("error checking transaction: ", error);
+      throw new Error("Error checking transaction");
     }
   }
 }

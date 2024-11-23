@@ -61,9 +61,12 @@ async function lunches() {
               )}
               <p className="font-semibold">Stock: {lunch.stock}</p>
             </div>
-            <div className="absolute top-3 right-3 hidden group-hover:block hover:cursor-pointer">
+            <Link
+              href={"lunches/edit/" + lunch.id}
+              className="absolute top-3 right-3 hidden group-hover:block hover:cursor-pointer"
+            >
               <PencilIcon w={18} h={18} className="fill-gray-700 " />
-            </div>
+            </Link>
           </div>
         ))}
       </div>

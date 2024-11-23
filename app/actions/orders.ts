@@ -45,8 +45,6 @@ export async function placeOrder(
       };
     });
 
-    console.log("lunches: ", lunches);
-
     const order: Order = {
       id: "",
       lunches: lunches as LunchPreview[],
@@ -67,7 +65,6 @@ export async function placeOrder(
       orderId,
       order.totalPrice,
     );
-    console.log("paymentUrl: ", paymentUrl);
 
     return {
       message: "",

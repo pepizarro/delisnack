@@ -24,7 +24,13 @@ export default function AdminLayout({
             <Link href="/" className="hover:cursor-pointer">
               <Image src={logo} alt="logo" width={120} />
             </Link>
-            <p>root layout</p>
+            <Link className="font-semibold" href="/admin/">
+              Órdenes
+            </Link>
+
+            <Link className="font-semibold" href="/admin/lunches">
+              Almuerzos
+            </Link>
           </div>
         </div>
         {children}

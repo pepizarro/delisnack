@@ -14,6 +14,7 @@ import {
   getDocs,
   getFirestore,
   runTransaction,
+  updateDoc,
 } from "firebase/firestore";
 
 export class FirestoreDB implements Database {
@@ -103,6 +104,19 @@ export class FirestoreDB implements Database {
     return;
   }
 
+  async updateLunch(newLunch: Lunch): Promise<void> {
+    try {
+      const docRef = doc(this.db, "lunches", newLunch.id);
+      if (!docRef) {
+        throw new Error(`Lunch with id: ${newLunch.id} not found`);
+      }
+      await updateDoc(docRef, newLunch);
+    } catch (error) {
+      console.error(error);
+      throw new Error("Error updating lunch with id: " + newLunch.id);
+    }
+  }
+
   async getOrder(orderId: string): Promise<Order[]> {
     console.log(orderId);
     return [];
@@ -142,6 +156,7 @@ export class FirestoreDB implements Database {
 
         transaction.update(lunchRef, {
           stock: lunchData.stock - lunch.amount,
+          available: lunchData.stock - lunch.amount > 0,
         });
         console.log("Transaction succesful lunch with id: ", lunch.lunchId);
       }
@@ -156,6 +171,40 @@ export class FirestoreDB implements Database {
     console.log("Order created with id: ", orderDoc.id);
 
     return orderDoc.id;
+  }
+
+  async updateOrder<K extends keyof Order>(
+    orderId: string,
+    key: K,
+    val: Order[K],
+  ): Promise<void> {
+    const orderRef = doc(this.ordersRef, orderId);
+    await updateDoc(orderRef, { [key]: val });
+  }
+
+  async getOrders(): Promise<Order[]> {
+    const orders: Order[] = [];
+
+    try {
+      const snapshot = await getDocs(this.ordersRef);
+      snapshot.docs.forEach((doc) => {
+        const data = doc.data();
+        orders.push({
+          id: doc.id,
+          lunches: data.lunches,
+          customerInfo: data.customerInfo,
+          paid: data.paid,
+          paymentMethod: data.paymentMethod,
+          totalPrice: data.totalPrice,
+          placedOrderTime: data.placedOrderTime.toDate(),
+        });
+      });
+
+      return orders;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Error getting lunches");
+    }
   }
 
   private validateLunch(doc: DocumentData | undefined, id: string) {

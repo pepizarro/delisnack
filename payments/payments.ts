@@ -9,9 +9,11 @@ export interface Payments {
     orderId: string,
     amount: number,
   ): Promise<{ url: string; token: string }>;
+  confirmTransaction(orderId: string, token: string): Promise<boolean>;
+  checkTransaction(token: string): Promise<boolean>;
 }
 
-const webpayPayments = new WebPay("commerceCode", "apiKey") as Payments;
+const webpayPayments = new WebPay() as Payments;
 
 export function getPaymentMethod(method: PaymentMethods): Payments {
   switch (method) {

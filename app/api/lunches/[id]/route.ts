@@ -6,7 +6,6 @@ export async function GET(
 ) {
   try {
     const lunch = await db.getLunch(params.id);
-    console.log("lunch: ", lunch);
 
     return new Response(JSON.stringify(lunch), {
       headers: {

@@ -27,7 +27,6 @@ export default function LunchesHomeComponent({ lunches }: Props) {
       lunches.map((lunch) => {
         const cart = localStorage.getItem("cart");
         const cartItems: CartItem[] = cart ? JSON.parse(cart) : [];
-        console.log("cartItems: ", cartItems);
         return {
           ...lunch,
           inCart: cartItems.some((item) => item.id === lunch.id),

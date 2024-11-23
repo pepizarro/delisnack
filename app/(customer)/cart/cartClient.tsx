@@ -19,12 +19,6 @@ export default function CartPageClientComponent() {
     const fetchCartItems = async () => {
       const cart = localStorage.getItem("cart");
       const cartIds: CartItem[] = cart ? JSON.parse(cart) : [];
-      //async function fetchLunches(id: string) {
-      //  const res = await fetch("/api/lunches/" + id);
-      //  const data = await res.json();
-      //  console.log("data: ", data);
-      //  setCartItems((prev) => [...prev, data]);
-      //}
 
       const requests = [];
       for (let i = 0; i < cartIds.length; i++) {
@@ -32,7 +26,6 @@ export default function CartPageClientComponent() {
       }
       try {
         const items = await Promise.all([...requests]);
-        console.log("items: ", items);
         for (let i = 0; i < items.length; i++) {
           if (items[i].stock <= 0) {
             items[i].amount = 0;

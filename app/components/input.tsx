@@ -4,12 +4,16 @@ export function TextInputComponent({
   name,
   placeholder,
   required,
+  value,
+  onChange,
 }: {
   label: string;
   id: string;
   name?: string;
   placeholder?: string;
   required?: boolean;
+  value?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
   return (
     <div className="w-full flex flex-col items-start justify-center">
@@ -23,6 +27,8 @@ export function TextInputComponent({
         type="text"
         name={name}
         placeholder={placeholder}
+        value={value}
+        onChange={onChange}
       />
     </div>
   );
@@ -35,6 +41,8 @@ export function NumberInputComponent({
   placeholder,
   limits,
   required,
+  value,
+  onChange,
 }: {
   label: string;
   id: string;
@@ -42,6 +50,8 @@ export function NumberInputComponent({
   placeholder?: string;
   limits?: { min: number; max: number };
   required?: boolean;
+  value?: number;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }) {
   return (
     <div className="w-full flex flex-col items-start justify-center">
@@ -54,6 +64,8 @@ export function NumberInputComponent({
         id={id}
         type="number"
         name={name}
+        value={value}
+        onChange={onChange}
         placeholder={placeholder}
         min={limits?.min}
         max={limits?.max}
