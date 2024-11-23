@@ -3,6 +3,7 @@ import db from "@/db/db";
 import Image from "next/image";
 import Link from "next/link";
 
+export const dynamic = "force-dynamic";
 export default async function AdminLunchesPage() {
   return (
     <div className="w-full md:w-[700px] xl:w-[900px] md:m-auto px-8 flex flex-col gap-5 items-start">
