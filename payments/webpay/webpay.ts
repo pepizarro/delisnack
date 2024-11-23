@@ -30,7 +30,7 @@ export class WebPay implements Payments {
         orderId,
         "session-id",
         amount,
-        `http://localhost:3000/success/${orderId}`,
+        `https://delisnack.vercel.app/success/${orderId}`,
       );
       return { url: response.url, token: response.token };
     } catch (error) {
