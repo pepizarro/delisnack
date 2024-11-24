@@ -5,6 +5,7 @@ import { CartLunch } from "../(customer)/cart/page";
 import { getPaymentMethod, PaymentMethods } from "@/payments/payments";
 import db from "@/db/db";
 import { OrderError, OrderErrorType } from "@/utils/errors";
+import { redirect } from "next/navigation";
 
 export type OrderActionResponse = {
   // optional code
@@ -56,6 +57,7 @@ export async function placeOrder(
       paymentMethod: rawFormData.paymentMethod as PaymentMethods,
       totalPrice: Number(rawFormData.total),
       placedOrderTime: new Date(),
+      completed: false,
     };
 
     const orderId = await db.createOrder(order);
@@ -84,4 +86,19 @@ export async function placeOrder(
       error: true,
     };
   }
+}
+
+export async function completeOrder(formData: FormData) {
+  console.log("Completing order");
+  const rawFormData = {
+    orderId: formData.get("order-id") as string,
+  };
+
+  try {
+    db.updateOrder(rawFormData.orderId, "completed", true);
+  } catch {
+    console.error("Error completing order");
+  }
+
+  redirect("/admin");
 }

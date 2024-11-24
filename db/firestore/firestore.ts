@@ -13,8 +13,10 @@ import {
   getDoc,
   getDocs,
   getFirestore,
+  query,
   runTransaction,
   updateDoc,
+  where,
 } from "firebase/firestore";
 
 export class FirestoreDB implements Database {
@@ -166,6 +168,7 @@ export class FirestoreDB implements Database {
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { id, ...rest } = order;
+    order.completed = false;
 
     const orderDoc = await addDoc(this.ordersRef, rest);
     console.log("Order created with id: ", orderDoc.id);
@@ -197,6 +200,34 @@ export class FirestoreDB implements Database {
           paymentMethod: data.paymentMethod,
           totalPrice: data.totalPrice,
           placedOrderTime: data.placedOrderTime.toDate(),
+          completed: data.completed,
+        });
+      });
+
+      return orders;
+    } catch (error) {
+      console.error(error);
+      throw new Error("Error getting lunches");
+    }
+  }
+
+  async getPendingOrders(): Promise<Order[]> {
+    const orders: Order[] = [];
+
+    try {
+      const q = query(this.ordersRef, where("completed", "==", false));
+      const snapshot = await getDocs(q);
+      snapshot.docs.forEach((doc) => {
+        const data = doc.data();
+        orders.push({
+          id: doc.id,
+          lunches: data.lunches,
+          customerInfo: data.customerInfo,
+          paid: data.paid,
+          paymentMethod: data.paymentMethod,
+          totalPrice: data.totalPrice,
+          placedOrderTime: data.placedOrderTime.toDate(),
+          completed: data.completed,
         });
       });
 

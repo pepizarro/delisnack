@@ -1,10 +1,13 @@
+import { completeOrder } from "@/app/actions/orders";
+import { CheckIcon } from "@/app/icons";
 import db from "@/db/db";
 
 export const dynamic = "force-dynamic";
 export default async function Admin() {
   async function orders() {
     try {
-      const orders = await db.getOrders();
+      const orders = await db.getPendingOrders();
+
       orders.sort(
         (a, b) =>
           new Date(b.placedOrderTime).getTime() -
@@ -15,7 +18,7 @@ export default async function Admin() {
           {orders.map((order) => (
             <div
               key={order.id}
-              className="w-full min-h-[200px] rounded-lg shadow-sm bg-white p-4 flex flex-row items-center gap-5 overflow-hidden"
+              className="relative w-full min-h-[200px] rounded-lg shadow-sm bg-white p-4 flex flex-col md:flex-row items-start justify-between gap-2 overflow-hidden"
             >
               <div className="py-3 flex flex-col gap-1 justify-evenly">
                 <p className="text-lg font-bold">
@@ -39,6 +42,15 @@ export default async function Admin() {
                   )}
                 </p>
               </div>
+              <form action={completeOrder}>
+                <input type="hidden" name="order-id" value={order.id} />
+                <button
+                  type="submit"
+                  className="group m-2 p-2 border-2 border-deliGreen rounded-full hover:bg-green-200 cursor-pointer"
+                >
+                  <CheckIcon className="fill-deliGreen" w={20} h={20} />
+                </button>
+              </form>
             </div>
           ))}
         </div>
@@ -51,7 +63,7 @@ export default async function Admin() {
 
   return (
     <div className="w-full flex flex-col gap-5 items-center">
-      <h1 className="text-2xl font-bold">Órdenes</h1>
+      <h1 className="text-2xl font-bold">Reservas</h1>
       {orders()}
     </div>
   );

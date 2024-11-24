@@ -102,7 +102,7 @@ export default function LunchesHomeComponent({ lunches }: Props) {
                 />
               </div>
               <div className="w-full h-[40%] flex flex-col gap-1 md:gap-3 justify-around bg-white px-4 py-2">
-                <div className="flex flex-col gap-1">
+                <div className="relative group flex flex-col gap-1">
                   <h2 className="text-lg md:text-xl font-semibold">
                     {lunch.name}
                   </h2>

@@ -16,6 +16,8 @@ export interface Database {
   ): Promise<void>;
 
   getOrders(): Promise<Order[]>;
+
+  getPendingOrders(): Promise<Order[]>;
 }
 
 const db = new FirestoreDB() as Database;

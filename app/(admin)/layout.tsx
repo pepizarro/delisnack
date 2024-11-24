@@ -25,7 +25,7 @@ export default function AdminLayout({
               <Image src={logo} alt="logo" width={120} />
             </Link>
             <Link className="font-semibold" href="/admin/">
-              Órdenes
+              Reservas
             </Link>
 
             <Link className="font-semibold" href="/admin/lunches">

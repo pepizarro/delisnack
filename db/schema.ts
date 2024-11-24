@@ -45,4 +45,5 @@ export type Order = {
   paymentToken?: string;
   totalPrice: number;
   placedOrderTime: Date;
+  completed: boolean;
 };
