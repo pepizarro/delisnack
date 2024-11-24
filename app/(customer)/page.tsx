@@ -7,6 +7,7 @@ export default async function Menu() {
   async function lunches() {
     try {
       const lunches = await db.getLunches();
+
       return <LunchesHomeComponent lunches={lunches} />;
     } catch (error) {
       console.error(error);

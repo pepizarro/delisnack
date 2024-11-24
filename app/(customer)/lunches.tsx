@@ -106,7 +106,7 @@ export default function LunchesHomeComponent({ lunches }: Props) {
                   <h2 className="text-lg md:text-xl font-semibold">
                     {lunch.name}
                   </h2>
-                  <p className="text-gray-400 max-w-full overflow-hidden">
+                  <p className="text-gray-400 max-w-full overflow-hidden truncate">
                     {lunch.shortDescription}
                   </p>
                 </div>
